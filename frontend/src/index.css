@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+@theme {
+  /* 60% Dominant - Deep Forest Green */
+  --color-primary: #0F392B;
+  /* Richer, slightly warmer deep green */
+  --color-primary-light: #1D5B46;
+
+  /* 30% Secondary - Pure White / Surface */
+  --color-surface: #FFFFFF;
+  --color-surface-dim: #F3F4F6;
+  /* Gray-100 */
+
+  /* 10% Accent - Emergency Red & Signals */
+  --color-accent: #EF4444;
+  /* Red */
+  --color-accent-hover: #DC2626;
+  --color-success: #10B981;
+  /* Green for 'Safe' indicators */
+  --color-warning: #F59E0B;
+  /* Alert Orange */
+
+  --color-text-main: #111827;
+  /* Gray-900 */
+  --color-text-muted: #6B7280;
+  /* Gray-500 */
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom Utilities */
+@utility card-panel {
+  @apply bg-surface rounded-2xl shadow-xl shadow-primary/20 border border-white/10;
+}
+
+/* Base Styles */
+body {
+  background-color: var(--color-primary);
+  color: var(--color-text-main);
+  /* Overflow controlled in App.jsx */
+}
