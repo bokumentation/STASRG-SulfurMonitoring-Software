@@ -54,7 +54,7 @@ const ActionCenter = () => {
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
                         <span className="w-1 h-4 bg-red-500 rounded-full"></span>
-                        ACTION CENTER [ CONCEPT ] 
+                        ACTION CENTER
                     </h2>
                     <div className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold uppercase rounded-md flex items-center gap-1">
                         <AlertTriangle className="w-3 h-3" /> Live
@@ -66,10 +66,10 @@ const ActionCenter = () => {
                     className="w-full bg-red-500 hover:bg-red-600 transition-all active:scale-[0.98] text-white font-bold py-3 rounded-xl shadow-lg shadow-red-500/30 flex items-center justify-center gap-3 mb-4 group shrink-0"
                 >
                     <Radio className="w-4 h-4 animate-pulse" />
-                    BROADCAST ALERT CONCEPT
+                    BROADCAST ALERT
                 </button>
 
-                <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 mb-4 pr-1">
+                {/* <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 mb-4 pr-1">
                     <div className="space-y-2">
                         {logs.map((log) => (
                             <div
@@ -96,7 +96,7 @@ const ActionCenter = () => {
                             </div>
                         ))}
                     </div>
-                </div>
+                </div> */}
 
                 <div className="mt-auto pt-4 border-t border-gray-100 shrink-0">
                     <div className="flex items-start gap-3 p-3 bg-emerald-50 rounded-lg border border-emerald-100">
