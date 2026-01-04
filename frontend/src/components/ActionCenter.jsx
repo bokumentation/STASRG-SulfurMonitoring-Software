@@ -54,7 +54,7 @@ const ActionCenter = () => {
                 <div className="flex justify-between items-center mb-4">
                     <h2 className="text-sm font-bold text-gray-800 flex items-center gap-2">
                         <span className="w-1 h-4 bg-red-500 rounded-full"></span>
-                        ACTION CENTER
+                        ACTION CENTER [ CONCEPT ] 
                     </h2>
                     <div className="px-2 py-0.5 bg-red-100 text-red-600 text-[10px] font-bold uppercase rounded-md flex items-center gap-1">
                         <AlertTriangle className="w-3 h-3" /> Live
@@ -66,7 +66,7 @@ const ActionCenter = () => {
                     className="w-full bg-red-500 hover:bg-red-600 transition-all active:scale-[0.98] text-white font-bold py-3 rounded-xl shadow-lg shadow-red-500/30 flex items-center justify-center gap-3 mb-4 group shrink-0"
                 >
                     <Radio className="w-4 h-4 animate-pulse" />
-                    BROADCAST ALERT
+                    BROADCAST ALERT CONCEPT
                 </button>
 
                 <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 mb-4 pr-1">
@@ -119,8 +119,8 @@ const ActionCenter = () => {
 
             {/* Full Screen Countdown Overlay */}
             {countdown !== null && (
-                <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-red-600 animate-in fade-in duration-200">
-                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-red-500 to-red-700"></div>
+                <div className="fixed inset-0 z-100 flex flex-col items-center justify-center bg-red-600 animate-in fade-in duration-200">
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,var(--tw-gradient-stops))] from-red-500 to-red-700"></div>
 
                     <div className="relative z-10 flex flex-col items-center">
                         <p className="text-red-200 text-xl font-bold uppercase tracking-[0.5em] mb-8 animate-pulse">Broadcasting in</p>

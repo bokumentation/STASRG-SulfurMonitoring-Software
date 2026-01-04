@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* 60% Dominant - Deep Forest Green */
+  /* Warna Background: 60% Dominant - Deep Forest Green */
   --color-primary: #0F392B;
   /* Richer, slightly warmer deep green */
   --color-primary-light: #1D5B46;

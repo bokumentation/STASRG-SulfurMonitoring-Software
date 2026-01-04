@@ -24,9 +24,9 @@ const EnvironmentPanel = () => {
                 </div>
                 <div className="flex flex-col gap-1 p-3 bg-gray-50 rounded-xl border border-gray-100">
                     <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold text-gray-400 mb-1">
-                        <Gauge className="w-3 h-3 text-purple-400" /> Pressure
+                        <Gauge className="w-3 h-3 text-purple-400" /> ATM Pressure
                     </div>
-                    <div className="text-xl font-bold text-gray-800">1011</div>
+                    <div className="text-xl font-bold text-gray-800">!data</div>
                 </div>
             </div>
         </div>
