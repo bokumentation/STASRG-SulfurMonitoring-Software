@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-
-// Fix for default marker icons in React-Leaflet
 import markerIcon from "leaflet/dist/images/marker-icon.png";
 import markerShadow from "leaflet/dist/images/marker-shadow.png";
 
@@ -22,9 +20,7 @@ function ChangeView({ center }) {
 }
 
 const GpsDashboard = ({ position, setPosition }) => {
-    // Placeholder for real-time data fetching
     useEffect(() => {
-        // In the future, this is where your WebSocket or Fetch call to FastAPI goes
         console.log("Listening for GPS updates...");
     }, [setPosition]);
 
