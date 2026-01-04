@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Logs
 logs
 *.log
@@ -22,3 +23,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+=======
+/.cache
+/.vscode
+>>>>>>> 035581b73cdc64f382029971b92a0e8e8338beae
