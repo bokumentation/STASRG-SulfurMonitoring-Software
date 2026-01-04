@@ -1,75 +1,50 @@
-from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import APIRouter
+from pydantic import BaseModel
+import time
 
-todos = [
-    {
-        "id": "1",
-        "item": "Read a book."
-    },
-    {
-        "id": "2",
-        "item": "Cycle around town."
-    }
-]
+router = APIRouter()
 
-app = FastAPI()
+class SensorReading(BaseModel):
+    so2: float
+    h2s: float
+    wind_speed: float
+    wind_dir: int
+    lat: float
+    lng: float
+    # Add INA219 specific fields
+    bus_voltage: float  # Volts
+    current_ma: float   # Milliamps
+    power_mw: float     # Milliwatts
+    battery_pct: int    # Calculated percentage
 
-origins = [
-    "http://localhost:5173",
-    "localhost:5173"
-]
-
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"]
-)
-
-
-@app.get("/", tags=["root"])
-async def read_root() -> dict:
-    return {"message": "Welcome to your todo list."}
-
-
-@app.get("/todo", tags=["todos"])
-async def get_todos() -> dict:
-    return { "data": todos }
-
-
-@app.post("/todo", tags=["todos"])
-async def add_todo(todo: dict) -> dict:
-    todos.append(todo)
+@router.get("/sensors")
+async def get_sensors():
+    # Example INA219 data (Li-ion battery ~3.7V - 4.2V)
+    bus_v = 3.95 
+    curr_ma = 120.5
+    
+    # Simple battery percentage calculation for a 1S Li-ion
+    # (Voltage - Empty) / (Full - Empty)
+    pct = int((bus_v - 3.4) / (4.2 - 3.4) * 100)
+    pct = max(0, min(100, pct)) # Clamp between 0-100
+    
     return {
-        "data": { "Todo added." }
+        "so2": 27.2,
+        "h2s": 0.008,
+        "wind_speed": 1.5,
+        "wind_dir": 5,
+        "lat": -6.973235,
+        "lng": 107.632604,
+        "timestamp": time.time(),
+        "bus_voltage": bus_v,
+        "current_ma": curr_ma,
+        "power_mw": bus_v * curr_ma,
+        "battery_pct": pct,
+        "temp": 26.5,     # Add this
+        "humidity": 78    # Add this
     }
 
-
-@app.put("/todo/{id}", tags=["todos"])
-async def update_todo(id: int, body: dict) -> dict:
-    for todo in todos:
-        if int(todo["id"]) == id:
-            todo["item"] = body["item"]
-            return {
-                "data": f"Todo with id {id} has been updated."
-            }
-
-    return {
-        "data": f"Todo with id {id} not found."
-    }
-
-
-@app.delete("/todo/{id}", tags=["todos"])
-async def delete_todo(id: int) -> dict:
-    for todo in todos:
-        if int(todo["id"]) == id:
-            todos.remove(todo)
-            return {
-                "data": f"Todo with id {id} has been removed."
-            }
-
-    return {
-        "data": f"Todo with id {id} not found."
-    }
+# In app/api.py
+@router.get("/status")
+async def get_status():
+    return {"status": "ok"}
