@@ -1,4 +1,4 @@
-import { LayoutDashboard, Database, Activity, Settings, User, Circle } from "lucide-react";
+import { LayoutDashboard, Database, Activity, Settings, User, Circle, Info } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -21,6 +21,7 @@ const navItems = [
   { title: "Overview", icon: LayoutDashboard, url: "/" },
   { title: "Sensors", icon: Activity, url: "/sensors" },
   { title: "History", icon: Database, url: "/history" },
+  { title: "Information", icon: Info, url: "/info" },
   { title: "Settings", icon: Settings, url: "/settings" },
 ];
 
