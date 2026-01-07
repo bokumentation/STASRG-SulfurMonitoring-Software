@@ -5,9 +5,10 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Routes, Route } from "react-router-dom";
 import DashboardMainContent from "./DashboardMainContent";
 
-const SensorsPage = () => <div className="p-4">Sensors Monitoring Page</div>;
-const LogsPage = () => <div className="p-4">System Logs Page</div>;
-const SettingsPage = () => <div className="p-4">Settings Page</div>;
+// Pages
+import LogsPage from "./pages/LogsPage";
+import SensorsPage from "./pages/SensorsPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const DashboardLayout = () => {
   return (
@@ -18,7 +19,6 @@ const DashboardLayout = () => {
           <Header />
 
           <main className="p-6">
-           {/* <DashboardMainConcent /> */}
            <Routes>
               <Route path="/" element={<DashboardMainContent />} />
               <Route path="/sensors" element={<SensorsPage />} />

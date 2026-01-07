@@ -7,7 +7,8 @@ const DeviceInfoPanel = ({ sensorData, position, setPosition }) => {
 
     const {
         bus_voltage = 0,
-        current_ma = 0
+        current_ma = 0,
+        battery_pct = 0
     } = sensorData || {};
 
     return (

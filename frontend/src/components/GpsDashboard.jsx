@@ -19,10 +19,12 @@ function ChangeView({ center }) {
     return null;
 }
 
-const GpsDashboard = ({ position, setPosition }) => {
+const GpsDashboard = ({ sensorData, position, setPosition }) => {
     useEffect(() => {
         console.log("Listening for GPS updates...");
     }, [setPosition]);
+
+    const { so2, h2s, temp, humidity, bus_voltage } = sensorData;
 
     return (
         <div className="w-full h-full min-h-125 z-0">
@@ -38,15 +40,30 @@ const GpsDashboard = ({ position, setPosition }) => {
                 <ChangeView center={position} />
                 <Marker position={position}>
                     <Popup>
-                        <div className="text-xs font-sans">
-                            <strong>Sensor Node 1</strong>
-                            <br />
-                            Active Monitoring
-                            <p>
-                                {" "}
-                                SO2: 00.00ugm <br /> H2S: 00.00ugm <br /> Wind
-                                Speed: 00.00m/s <br /> Wind Direction: W{" "}
-                            </p>
+                        <div className="text-sm font-sans min-w-37.5">
+                            <strong className="text-black text-center block mb-1">Sensor Node 1</strong>
+                            <div className="border-t border-gray-100 pt-1 space-y-1">
+                                <p className="flex justify-between">
+                                    <span className="text-gray-500">SO₂:</span> 
+                                    <span className="font-mono font-bold">{so2.toFixed(2)} µg/m³</span>
+                                </p>
+                                <p className="flex justify-between">
+                                    <span className="text-gray-500">H₂S:</span> 
+                                    <span className="font-mono font-bold">{h2s.toFixed(3)} µg/m³</span>
+                                </p>
+                                <p className="flex justify-between">
+                                    <span className="text-gray-500">Temp:</span> 
+                                    <span className="font-mono">{temp.toFixed(1)}°C</span>
+                                </p>
+                                <p className="flex justify-between">
+                                    <span className="text-gray-500">Hum:</span> 
+                                    <span className="font-mono">{humidity.toFixed(1)}%</span>
+                                </p>
+                                <p className="flex justify-between border-t border-dashed pt-1 mt-1 text-[10px]">
+                                    <span className="text-gray-400 uppercase">Power:</span> 
+                                    <span className="text-emerald-600 font-bold">{bus_voltage.toFixed(2)}V</span>
+                                </p>
+                            </div>
                         </div>
                     </Popup>
                 </Marker>
