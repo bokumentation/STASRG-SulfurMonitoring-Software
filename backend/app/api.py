@@ -7,9 +7,9 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
 router = APIRouter()
 
-# Global variable to track the serial instance
 serial_instance = None
 serial_lock = threading.Lock()
+
 
 class ConnectionManager:
     def __init__(self):
@@ -30,20 +30,23 @@ class ConnectionManager:
             except:
                 pass
 
+
 manager = ConnectionManager()
 
-# SERIAL_PORT = '/dev/ttyACM0'
-SERIAL_PORT = '/dev/ttyUSB0'
+# --- UBAH SERIAL PORT SESUSAI OS DAN MICROCONTROLLER ---
+SERIAL_PORT = "/dev/ttyACM0"  # ESP32C3
+# SERIAL_PORT = "/dev/ttyUSB0" # HELTEC ESP32S3
 BAUD_RATE = 115200
+
 
 def serial_to_websocket_task(loop):
     global serial_instance
-    
+
     with serial_lock:
         if serial_instance is not None:
             print("Serial already running, skipping duplicate thread.")
             return
-        
+
         try:
             serial_instance = serial.Serial(SERIAL_PORT, BAUD_RATE, timeout=1)
             serial_instance.reset_input_buffer()
@@ -55,8 +58,10 @@ def serial_to_websocket_task(loop):
     try:
         while True:
             if serial_instance.in_waiting > 0:
-                line = serial_instance.readline().decode('utf-8', errors='ignore').strip()
-                parts = line.split(',')
+                line = (
+                    serial_instance.readline().decode("utf-8", errors="ignore").strip()
+                )
+                parts = line.split(",")
                 if len(parts) == 7:
                     data = {
                         "so2": float(parts[0]),
@@ -69,7 +74,7 @@ def serial_to_websocket_task(loop):
                         "lat": -6.973235,
                         "lng": 107.632604,
                         "wind_dir": 0,
-                        "timestamp": time.time()
+                        "timestamp": time.time(),
                     }
                     asyncio.run_coroutine_threadsafe(manager.broadcast(data), loop)
     except Exception as e:
@@ -80,33 +85,36 @@ def serial_to_websocket_task(loop):
                 serial_instance.close()
                 serial_instance = None
 
+
 def start_serial_worker():
-    # We check if we are in the main Uvicorn worker process
-    # This prevents the reloader process from starting a thread
     import os
+
     if os.environ.get("RUN_MAIN") == "true" or not os.environ.get("RELOAD"):
         loop = asyncio.get_event_loop()
-        thread = threading.Thread(target=serial_to_websocket_task, args=(loop,), daemon=True)
+        thread = threading.Thread(
+            target=serial_to_websocket_task, args=(loop,), daemon=True
+        )
         thread.start()
     else:
         print("Skipping thread start in watcher process...")
+
 
 @router.get("/status")
 async def get_status():
     return {
         "status": "online",
         "device": SERIAL_PORT,
-        "serial_connected": serial_instance is not None if 'serial_instance' in globals() else False
+        "serial_connected": (
+            serial_instance is not None if "serial_instance" in globals() else False
+        ),
     }
+
 
 @router.websocket("/ws/sensors")
 async def websocket_endpoint(websocket: WebSocket):
-    # The 403 usually happens if the origin header doesn't match
-    # We accept the connection here
-    await manager.connect(websocket) 
+    await manager.connect(websocket)
     try:
         while True:
-            # Wait for any message from client (or just keep alive)
-            await websocket.receive_text() 
+            await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
