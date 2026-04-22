@@ -3,10 +3,13 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 from app.api import router as api_router, start_serial_worker
+from app.ml_service import load_all_models
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     print("--- APP STARTUP ---")
+    print("Loading ML models...")
+    load_all_models()
     start_serial_worker()
     yield
     print("--- APP SHUTDOWN ---")

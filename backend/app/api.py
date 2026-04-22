@@ -3,7 +3,9 @@ import threading
 import json
 import serial
 import time
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+from pydantic import BaseModel
+from app.ml_service import predict, predict_all_nodes, get_loaded_node_ids, build_features
 
 router = APIRouter()
 
@@ -99,6 +101,8 @@ def start_serial_worker():
         print("Skipping thread start in watcher process...")
 
 
+# ─── REST Endpoints ──────────────────────────────────────────────────────────
+
 @router.get("/status")
 async def get_status():
     return {
@@ -118,3 +122,104 @@ async def websocket_endpoint(websocket: WebSocket):
             await websocket.receive_text()
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+
+
+# ─── ML Prediction Endpoints ────────────────────────────────────────────────
+
+@router.get("/models/status")
+async def models_status():
+    """Check which ML models are currently loaded."""
+    loaded = get_loaded_node_ids()
+    return {
+        "loaded_models": loaded,
+        "total": len(loaded),
+        "nodes_without_model": ["r"],
+        "input_features": [
+            "h2s", "so2", "hum", "temp", "windspeed",
+            "hour", "minute", "minute_of_day",
+            "h2s_diff", "so2_diff", "gas_ratio_so2_h2s",
+        ],
+        "output_labels": ["h2s", "so2"],
+    }
+
+
+@router.get("/predict/{node_id}")
+async def predict_node(
+    node_id: int,
+    h2s: float = Query(..., description="H2S concentration (µg/m³)"),
+    so2: float = Query(..., description="SO2 concentration (µg/m³)"),
+    hum: float = Query(..., description="Humidity (%)"),
+    temp: float = Query(..., description="Temperature (°C)"),
+    windspeed: float = Query(0.0, description="Wind speed (m/s)"),
+    h2s_prev: float = Query(0.0, description="Previous H2S reading for diff calculation"),
+    so2_prev: float = Query(0.0, description="Previous SO2 reading for diff calculation"),
+):
+    """
+    Run prediction for a single sensor node (1-6).
+    Derived features (hour, minute, minute_of_day, diffs, gas ratio)
+    are computed automatically from the raw values.
+    
+    Output: predicted h2s and so2 concentrations.
+    """
+    if node_id not in range(1, 7):
+        return {"error": f"Node {node_id} does not have a model. Only nodes 1-6 are supported."}
+
+    features = build_features(
+        h2s=h2s, so2=so2, hum=hum, temp=temp, windspeed=windspeed,
+        h2s_prev=h2s_prev, so2_prev=so2_prev,
+    )
+    result = predict(node_id, features)
+    return result
+
+
+class PredictAllRequest(BaseModel):
+    """Request body for batch prediction across all nodes."""
+    h2s: float
+    so2: float
+    hum: float
+    temp: float
+    windspeed: float = 0.0
+    h2s_prev: float = 0.0
+    so2_prev: float = 0.0
+
+
+@router.post("/predict/all")
+async def predict_all(req: PredictAllRequest):
+    """
+    Run prediction for all sensor nodes (1-6) using the same input features.
+    Node R is excluded (no model).
+    Output: predicted h2s and so2 for each node.
+    """
+    features = build_features(
+        h2s=req.h2s, so2=req.so2, hum=req.hum, temp=req.temp,
+        windspeed=req.windspeed, h2s_prev=req.h2s_prev, so2_prev=req.so2_prev,
+    )
+    features_per_node = {node_id: features for node_id in range(1, 7)}
+    results = predict_all_nodes(features_per_node)
+    return {"predictions": results}
+
+
+class PredictPerNodeRequest(BaseModel):
+    """Request body for per-node batch prediction with different features per node."""
+    nodes: dict[int, list[float]]
+
+
+@router.post("/predict/batch")
+async def predict_batch(req: PredictPerNodeRequest):
+    """
+    Run prediction for specific nodes with different pre-built feature vectors.
+    Each feature vector must have 11 elements matching the model input order.
+    
+    Body example:
+    {
+        "nodes": {
+            1: [h2s, so2, hum, temp, windspeed, hour, minute, minute_of_day, h2s_diff, so2_diff, gas_ratio],
+            3: [h2s, so2, hum, temp, windspeed, hour, minute, minute_of_day, h2s_diff, so2_diff, gas_ratio]
+        }
+    }
+    """
+    valid_nodes = {k: v for k, v in req.nodes.items() if k in range(1, 7)}
+    results = predict_all_nodes(valid_nodes)
+    return {"predictions": results}
+
+

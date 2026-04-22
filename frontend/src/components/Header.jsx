@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Activity } from "lucide-react";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "./ui/sidebar";
 
 const Header = () => {
     const [time, setTime] = useState(new Date());

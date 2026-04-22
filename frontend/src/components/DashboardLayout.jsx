@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Header from "./Header";
-import { SidebarProvider, SidebarTrigger, SidebarInset } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { SidebarProvider, SidebarTrigger, SidebarInset } from "../components/ui/sidebar";
+import { AppSidebar } from "./AppSidebar";
 import { Routes, Route } from "react-router-dom";
 import DashboardMainContent from "./DashboardMainContent";
 
@@ -19,7 +19,7 @@ const DashboardLayout = () => {
           <Header />
 
           <main className="p-6">
-           <Routes>
+            <Routes>
               <Route path="/" element={<DashboardMainContent />} />
               <Route path="/sensors" element={<SensorsPage />} />
               <Route path="/history" element={<LogsPage />} />

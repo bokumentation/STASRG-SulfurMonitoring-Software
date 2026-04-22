@@ -12,10 +12,10 @@ import {
   SidebarFooter,
   SidebarTrigger,
   useSidebar
-} from "@/components/ui/sidebar";
+} from "./ui/sidebar";
 import { Link } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-import api from "@/lib/api";
+import api from "../lib/api";
 
 const navItems = [
   { title: "Overview", icon: LayoutDashboard, url: "/" },

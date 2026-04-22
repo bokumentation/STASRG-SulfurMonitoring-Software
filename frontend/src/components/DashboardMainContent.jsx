@@ -4,7 +4,7 @@ import ActionCenter from "./ActionCenter";
 import GpsDashboard from "./GpsDashboard";
 import DeviceInfoPanel from "./DeviceInfoPanel";
 import WindCard from "./WindCard";
-import api from "@/lib/api";
+import api from "../lib/api";
 import React, { useState, useEffect } from "react";
 
 const DashboardMainContent = () => {
